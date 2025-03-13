@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#9c27b0">
+  <title>مدیریت تغذیه بیماران دیالیزی</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <!-- بارگذاری Chart.js از CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>مدیریت تغذیه بیماران دیالیزی</h1>
+    </div>
+    <div class="nav">
+      <button onclick="showSection('dashboard')" class="active">داشبورد</button>
+      <button onclick="showSection('videos')">فیلم‌های آموزشی</button>
+      <button onclick="showSection('articles')">مقالات آموزشی</button>
+      <button onclick="showSection('foodList')">لیست مواد غذایی</button>
+      <button onclick="showSection('addFood')">افزودن غذا</button>
+      <button onclick="showSection('history')">تاریخچه</button>
+      <button onclick="showSection('settings')">تنظیمات</button>
+    </div>
+
+    <!-- داشبورد -->
+    <div id="dashboard" class="section active">
+      <div class="chart-container-grid">
+        <div class="chart-container">
+          <canvas id="sodiumChart"></canvas>
+          <div class="chart-info">
+            <div class="chart-face-sticker" id="sodiumFaceSticker"></div>
+            <div class="chart-label">سدیم</div>
+            <div class="chart-percentage" id="sodiumPercentage"></div>
+            <div class="chart-value" id="sodiumValue"></div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="potassiumChart"></canvas>
+          <div class="chart-info">
+            <div class="chart-face-sticker" id="potassiumFaceSticker"></div>
+            <div class="chart-label">پتاسیم</div>
+            <div class="chart-percentage" id="potassiumPercentage"></div>
+            <div class="chart-value" id="potassiumValue"></div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="phosphorusChart"></canvas>
+          <div class="chart-info">
+            <div class="chart-face-sticker" id="phosphorusFaceSticker"></div>
+            <div class="chart-label">فسفر</div>
+            <div class="chart-percentage" id="phosphorusPercentage"></div>
+            <div class="chart-value" id="phosphorusValue"></div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="proteinChart"></canvas>
+          <div class="chart-info">
+            <div class="chart-face-sticker" id="proteinFaceSticker"></div>
+            <div class="chart-label">پروتئین</div>
+            <div class="chart-percentage" id="proteinPercentage"></div>
+            <div class="chart-value" id="proteinValue"></div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="waterChart"></canvas>
+          <div class="chart-info">
+            <div class="chart-face-sticker" id="waterFaceSticker"></div>
+            <div class="chart-label">آب</div>
+            <div class="chart-percentage" id="waterPercentage"></div>
+            <div class="chart-value" id="waterValue"></div>
+          </div>
+        </div>
+      </div>
+      <div class="current-totals" id="currentTotals"></div>
+      <div id="warnings"></div>
+      <h2>محاسبه مواد مغذی</h2>
+      <form class="food-form" onsubmit="addFoodEntry(event)">
+        <select id="foodSelect" required></select>
+        <input type="number" id="amount" placeholder="مقدار (واحد)" step="1" required>
+        <select id="mealType" required>
+          <option value="breakfast">صبحانه</option>
+          <option value="lunch">ناهار</option>
+          <option value="dinner">شام</option>
+        </select>
+        <select id="dayOfWeek" required>
+          <option value="saturday">شنبه</option>
+          <option value="sunday">یکشنبه</option>
+          <option value="monday">دوشنبه</option>
+          <option value="tuesday">سه شنبه</option>
+          <option value="wednesday">چهارشنبه</option>
+          <option value="thursday">پنج شنبه</option>
+          <option value="friday">جمعه</option>
+        </select>
+        <button type="submit">ثبت مصرف</button>
+      </form>
+    </div>
+
+    <!-- فیلم‌های آموزشی -->
+    <div id="videos" class="section">
+      <h2>فیلم‌های آموزشی</h2>
+      <div class="video-container" id="videoContainer">
+        <!-- لینک‌های ویدیو در اینجا بارگذاری می‌شوند -->
+      </div>
+    </div>
+
+    <!-- مقالات آموزشی -->
+    <div id="articles" class="section">
+      <h2>مقالات آموزشی</h2>
+      <div class="education-list">
+        <details>
+          <summary>محدودیت‌ها</summary>
+          <div class="education-item" onclick="showArticleContent(0)">۱. اهمیت محدودیت مایعات در دیالیز</div>
+          <div class="education-item" onclick="showArticleContent(1)">۲. مدیریت مصرف پتاسیم روزانه</div>
+        </details>
+        <details>
+          <summary>تغذیه دیالیزی</summary>
+          <div class="education-item" onclick="showArticleContent(2)">۳. منابع غذایی حاوی فسفر بالا</div>
+          <div class="education-item" onclick="showArticleContent(3)">۴. برنامه ریزی وعده‌های غذایی هفتگی</div>
+          <div class="education-item" onclick="showArticleContent(4)">۵. جایگزین‌های نمک در رژیم غذایی</div>
+        </details>
+        <details>
+          <summary>ورزش و سلامتی</summary>
+          <div class="education-item" onclick="showArticleContent(5)">۶. کنترل فشار خون در بیماران دیالیزی</div>
+          <div class="education-item" onclick="showArticleContent(6)">۷. نقش پروتئین در تغذیه دیالیزی</div>
+          <div class="education-item" onclick="showArticleContent(7)">۸. مدیریت وزن در بین جلسات دیالیز</div>
+        </details>
+        <details>
+          <summary>موارد دیگر</summary>
+          <div class="education-item" onclick="showArticleContent(8)">۹. غذاهای ممنوعه برای بیماران کلیوی</div>
+          <div class="education-item" onclick="showArticleContent(9)">۱۰. راهکارهای کاهش تشنگی</div>
+          <div class="education-item" onclick="showArticleContent(10)">۱۱. مصرف صحیح مکمل‌های غذایی</div>
+          <div class="education-item" onclick="showArticleContent(11)">۱۲. ورزش و فعالیت بدنی مناسب</div>
+          <div class="education-item" onclick="showArticleContent(12)">۱۳. کنترل قند خون در بیماران دیابتی</div>
+          <div class="education-item" onclick="showArticleContent(13)">۱۴. روش‌های پخت مناسب</div>
+          <div class="education-item" onclick="showArticleContent(14)">۱۵. مدیریت استرس و سلامت روان</div>
+          <div class="education-item" onclick="showArticleContent(15)">۱۶. نشانه‌های اورژانسی در بیماران</div>
+          <div class="education-item" onclick="showArticleContent(16)">۱۷. مراقبت از دسترسی عروقی</div>
+          <div class="education-item" onclick="showArticleContent(17)">۱۸. تداخلات دارویی با مواد غذایی</div>
+          <div class="education-item" onclick="showArticleContent(18)">۱۹. برنامه غذایی نمونه روزانه</div>
+          <div class="education-item" onclick="showArticleContent(19)">۲۰. نکات مهم برای همراهان بیمار</div>
+        </details>
+      </div>
+      <div id="articleContent">
+        <!-- محتوای مقاله در اینجا نمایش داده می‌شود -->
+      </div>
+    </div>
+
+    <!-- لیست مواد غذایی -->
+    <div id="foodList" class="section">
+      <h2>لیست مواد غذایی</h2>
+      <table class="food-table">
+        <thead>
+          <tr>
+            <th>نام</th>
+            <th>سدیم (mg)</th>
+            <th>پتاسیم (mg)</th>
+            <th>فسفر (mg)</th>
+            <th>پروتئین (g)</th>
+            <th>آب (ml)</th>
+            <th>اقدامات</th>
+          </tr>
+        </thead>
+        <tbody id="foodDatabase"></tbody>
+      </table>
+      <form class="edit-food-form" id="editFoodForm" onsubmit="editFood(event)">
+        <input type="text" id="editFoodName" placeholder="نام ماده غذایی" required>
+        <input type="number" id="editSodium" placeholder="سدیم (میلی‌گرم)" required>
+        <input type="number" id="editPotassium" placeholder="پتاسیم (میلی‌گرم)" required>
+        <input type="number" id="editPhosphorus" placeholder="فسفر (میلی‌گرم)" required>
+        <input type="number" id="editProtein" placeholder="پروتئین (گرم)" required>
+        <input type="number" id="editWater" placeholder="آب (میلی‌لیتر)" required>
+        <button type="submit">ذخیره تغییرات</button>
+        <button type="button" onclick="cancelEdit()">انصراف</button>
+      </form>
+    </div>
+
+    <!-- افزودن غذا -->
+    <div id="addFood" class="section">
+      <h2>اضافه کردن ماده غذایی جدید</h2>
+      <form class="new-food-form" onsubmit="addNewFood(event)">
+        <input type="text" id="newFoodName" placeholder="نام ماده غذایی" required>
+        <input type="number" id="sodium" placeholder="سدیم (میلی‌گرم)" required>
+        <input type="number" id="potassium" placeholder="پتاسیم (میلی‌گرم)" required>
+        <input type="number" id="phosphorus" placeholder="فسفر (میلی‌گرم)" required>
+        <input type="number" id="protein" placeholder="پروتئین (گرم)" required>
+        <input type="number" id="water" placeholder="آب (میلی‌لیتر)" required>
+        <button type="submit">ذخیره</button>
+      </form>
+    </div>
+
+    <!-- تاریخچه -->
+    <div id="history" class="section">
+      <h2>تاریخچه مصرف</h2>
+      <button class="reset-button" onclick="clearHistory()">حذف تاریخچه</button>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>نام غذا</th>
+            <th>مقدار (واحد)</th>
+            <th>وعده</th>
+            <th>روز هفته</th>
+          </tr>
+        </thead>
+        <tbody id="historyTable"></tbody>
+      </table>
+    </div>
+
+    <!-- تنظیمات -->
+    <div id="settings" class="section">
+      <h2>تنظیمات محدودیت‌ها</h2>
+      <form class="settings-form" onsubmit="saveSettings(event)">
+        <label for="sodiumLimit">محدودیت سدیم (میلی‌گرم):</label>
+        <input type="number" id="sodiumLimit" required>
+        <label for="potassiumLimit">محدودیت پتاسیم (میلی‌گرم):</label>
+        <input type="number" id="potassiumLimit" required>
+        <label for="phosphorusLimit">محدودیت فسفر (میلی‌گرم):</label>
+        <input type="number" id="phosphorusLimit" required>
+        <label for="proteinMinLimit">حداقل پروتئین (گرم):</label>
+        <input type="number" id="proteinMinLimit" required>
+        <label for="proteinMaxLimit">حداکثر پروتئین (گرم):</label>
+        <input type="number" id="proteinMaxLimit" required>
+        <label for="waterLimit">محدودیت آب (میلی‌لیتر):</label>
+        <input type="number" id="waterLimit" required>
+        <button type="submit">ذخیره محدودیت‌ها</button>
+      </form>
+      <button class="reset-button" onclick="resetData()">بازنشانی داده‌ها</button>
+      <div class="theme-settings">
+        <h2>تنظیمات پوسته</h2>
+        <label for="fontSize">اندازه فونت:</label>
+        <input type="number" id="fontSize" value="1" step="0.1">
+        <button onclick="applyTheme()">اعمال پوسته</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ثبت سرویس‌ورکر جهت PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(function(err) {
+            console.error('ServiceWorker registration failed: ', err);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
